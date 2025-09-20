@@ -6,11 +6,8 @@
       "**/.*",
       "**/node_modules/**"
     ],
-    "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
-    ]
+    "rewrites": [],
+    "cleanUrls": true,
+    "trailingSlash": false
   }
 }

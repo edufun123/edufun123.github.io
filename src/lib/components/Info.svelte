@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { SessionState, State, waitForTooling } from "$lib/state.js";
+    import { initializeTooling, SessionState, State } from "$lib/state.js";
     import { browser } from "$app/environment";
     import { page } from "$app/state";
     import { onMount } from "svelte";
@@ -9,7 +9,7 @@
     let plays = $state(SessionState.plays);
     let version = $state("Fetching...")
     onMount(async () => {
-        await waitForTooling();
+        await initializeTooling();
         stateFulState = State;
         stateFulSessionState = SessionState;
         plays = SessionState.plays;
@@ -25,7 +25,13 @@
                 version = "Error fetching version";
             }
         }
-    })
+        setTimeout(() => {
+            // Just in case something changed
+            stateFulState = State;
+            stateFulSessionState = SessionState;
+            plays = SessionState.plays;
+        }, 5000);
+    });
 </script>
 
 <div class="information">

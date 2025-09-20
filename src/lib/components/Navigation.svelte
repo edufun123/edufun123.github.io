@@ -1,6 +1,6 @@
 <script lang="ts">
     import { page } from "$app/state";
-    const links = [
+    let links = [
         ["Tab Cloaker", "/tab-cloaker"],
         [
             "Master Doc",
@@ -9,6 +9,19 @@
         ["ROM Library", "/roms"],
         ["Discord", "https://discord.gg/GDEFRBTT3Z"],
     ];
+
+    // Use dirty URLs if hosted on amazonaws
+    if (typeof window !== "undefined" && window.origin.includes("amazonaws")) {
+        links = [
+            ["Tab Cloaker", "/tab-cloaker.html"],
+            [
+                "Master Doc",
+                "https://docs.google.com/document/d/11yw7n2F84XOkAwpM8tF-ZYHESuus1Gg7dmJ-WJum1fk",
+            ],
+            ["ROM Library", "/roms.html"],
+            ["Discord", "https://discord.gg/GDEFRBTT3Z"],
+        ];
+    }
 
     const currentPath = page.url.pathname;
     let menuOpen = $state(false);

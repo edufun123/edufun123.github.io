@@ -20,7 +20,11 @@ export function formatNumber(num: number): string {
 }
 
 export async function openGame(game: Game) {
-    window.open(`/play?gameID=${game.gameID}&r=t`, '_blank');
+    if (window.location.origin.includes("amazonaws")) {
+        window.open(`/play.html?gameID=${game.gameID}&r=t`, '_blank');
+    } else {
+        window.open(`/play?gameID=${game.gameID}&r=t`, '_blank');
+    }
     trackClick(game.gameID).catch((error) => {
         console.error("Failed to track click:", error);
     });
