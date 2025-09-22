@@ -177,7 +177,23 @@
 
     const searchRegex = /[a-z0-9]/i;
     let adBlock = $state(false);
+    let commitHash = $state("");
+
+    async function getCommitHash(): Promise<string> {
+        const apiRoute = "https://api.github.com/repos/ccported/games/commits/main";
+
+        const res = await fetch(apiRoute);
+
+        const data = await res.json();
+
+        const commitHash = data.sha || "";
+
+        return commitHash;
+    }
+
     onMount(async () => {
+
+        commitHash = (await getCommitHash()) || "";
         await initializeTooling();
 
         games = await loadGames();
@@ -408,6 +424,7 @@
                 <GameCard
                     {game}
                     {i}
+                    {commitHash}
                     tagClick={(tag: string) => {
                         toggleSearch(decamelize(tag));
                     }}

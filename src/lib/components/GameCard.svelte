@@ -5,7 +5,7 @@
 
     import type { Game } from "../types/game.ts";
 
-    const { game, i, tagClick }: { game: Game; i: number, tagClick: (tag: string) => void } = $props();
+    const { game, i, tagClick, commitHash }: { game: Game; i: number, tagClick: (tag: string) => void, commitHash: string } = $props();
     const {
         gameID,
         thumbPath,
@@ -17,7 +17,8 @@
         updatedTimestamp,
     } = game;
 
-    const normalThumbPath = `${State.currentServer.protocol}://${State.currentServer.hostname}${State.currentServer.path}${gameID}${thumbPath}`;
+
+    let normalThumbPath = `https://cdn.jsdelivr.net/gh/ccported/games@${commitHash}/${gameID}${thumbPath}`
     let starred = $state(State.pinnedGames.includes(gameID) ? true : false);
 
     let cardElement: HTMLDivElement;
