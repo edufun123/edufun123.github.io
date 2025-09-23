@@ -10,7 +10,11 @@
     import type { Game } from "$lib/types/game.js";
     import { onMount } from "svelte";
     import { page } from "$app/state";
-    import { detectAdBlockEnabled, trackClick } from "$lib/helpers.js";
+    import {
+        detectAdBlockEnabled,
+        getCommitHash,
+        trackClick,
+    } from "$lib/helpers.js";
     import { browser } from "$app/environment";
 
     let game: Game | null = $state(null);
@@ -64,6 +68,7 @@
     let iframe = $state(null as null | HTMLIFrameElement);
     let application: any = null;
     let adContinued = $state(false);
+    let commitHash = $state("");
     onMount(async () => {
         await initializeTooling();
         await fetchGameData();
@@ -82,7 +87,7 @@
             url.searchParams.delete("r");
             window.history.replaceState({}, document.title, url.toString());
         }
-
+        commitHash = await getCommitHash();
         if (adblock) {
             const interval = setInterval(() => {
                 if (withoutSupportingTimer > 0) {
@@ -107,8 +112,14 @@
         const serverHost = server.address.split(",")[0];
         // Note: This updateIframe function seems to use a different server format than our Server interface
         // For now, keeping the IP address detection logic here until we clarify the server parameter structure
-        const isIpAddress = /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(serverHost);
-        const protocol = isIpAddress ? 'http' : (window.isSecureContext ? 'https' : 'http');
+        const isIpAddress = /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(
+            serverHost,
+        );
+        const protocol = isIpAddress
+            ? "http"
+            : window.isSecureContext
+              ? "https"
+              : "http";
         iframe.src = `${protocol}://${serverHost}/${server.path}${game.gameID}/index.html`;
         let query = page.url.searchParams;
         query.set("server", server.name);
@@ -332,8 +343,7 @@
     ></script>
 </svelte:head>
 
-
-    {#if adblock && !continued && isAHost && adContinued} 
+{#if adblock && !continued && isAHost && adContinued}
     <div class="container">
         <div class="adblock-warning">
             <h2>Ad Blocker Detected</h2>
@@ -366,10 +376,16 @@
             {#if game}
                 <h2>{game.fName}</h2>
                 <p>{game.description}</p>
-                <img
-                    alt={`Cover art for ${game.fName}`}
-                    src={`${State.currentServer.protocol}://${State.currentServer.hostname}${State.currentServer.path}${game.gameID}${game.thumbPath}`}
-                />
+                {#if commitHash.length > 0}
+                    <img
+                        class="img"
+                        alt={`Cover art for ${game.fName}`}
+                        src="https://cdn.jsdelivr.net/gh/ccported/games@{commitHash}/{game.gameID}{game.thumbPath}"
+                    />
+                    <div style="color: #aaa;">Build: {commitHash.slice(0, 7)}...{commitHash.slice(-7)}</div>
+                {:else}
+                    <div class="img"></div>
+                {/if}
             {/if}
             <button onclick={play}>Play Game</button>
         </div>
@@ -393,7 +409,6 @@
     </div>
 {/if}
 
-
 <style>
     .play {
         display: flex;
@@ -411,10 +426,12 @@
         top: 0;
         left: 0;
     }
-    .play img {
-        max-width: 400px;
+    .play .img {
+        width: 400px;
+        min-height: 250px;
         margin: 20px 0;
         border-radius: 8px;
+        background-color: linear-gradient(135deg, #e0e0e0, #f9f9f9);
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
     .play h2 {

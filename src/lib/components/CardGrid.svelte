@@ -2,6 +2,7 @@
     import {
         decamelize,
         detectAdBlockEnabled,
+        getCommitHash,
         openGame,
     } from "$lib/helpers.js";
     import { initializeTooling, SessionState, State, testSingleServer } from "$lib/state.js";
@@ -179,17 +180,7 @@
     let adBlock = $state(false);
     let commitHash = $state("");
 
-    async function getCommitHash(): Promise<string> {
-        const apiRoute = "https://api.github.com/repos/ccported/games/commits/main";
 
-        const res = await fetch(apiRoute);
-
-        const data = await res.json();
-
-        const commitHash = data.sha || "";
-
-        return commitHash;
-    }
 
     onMount(async () => {
 
