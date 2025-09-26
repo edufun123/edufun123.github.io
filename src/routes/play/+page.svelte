@@ -96,7 +96,6 @@
                     clearInterval(interval);
                 }
             }, 1000);
-        } else {
         }
     });
 

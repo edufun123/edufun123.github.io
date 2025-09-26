@@ -5,7 +5,12 @@
         getCommitHash,
         openGame,
     } from "$lib/helpers.js";
-    import { initializeTooling, SessionState, State, testSingleServer } from "$lib/state.js";
+    import {
+        initializeTooling,
+        SessionState,
+        State,
+        testSingleServer,
+    } from "$lib/state.js";
     import type { Game } from "$lib/types/game.js";
     import { onMount } from "svelte";
     import GameCard from "./GameCard.svelte";
@@ -145,14 +150,24 @@
     let resultsListElement: HTMLUListElement;
     let searchResults = $state<{ game: Game; score: number }[]>([]);
     let debounceTimeout: ReturnType<typeof setTimeout> | null = null;
+
+    let firstInput = true;
     function oninput(e: Event) {
         const target = e.target as HTMLInputElement;
         searchTerm = target.value;
-        if (debounceTimeout) clearTimeout(debounceTimeout);
+        if (debounceTimeout) {
+            clearTimeout(debounceTimeout);
+        }
+        if (firstInput) {
+            firstInput = false;
+            updateSearchResults();
+            selectedIndex = 0;
+            return;
+        }
         debounceTimeout = setTimeout(() => {
             updateSearchResults();
             selectedIndex = 0;
-        }, 250);
+        }, 150);
     }
 
     function toggleSearch(term?: string) {
@@ -170,6 +185,7 @@
                 }
             }, 0);
         } else {
+            firstInput = true;
             searchTerm = "";
             updateSearchResults();
             selectedIndex = -1;
@@ -180,10 +196,7 @@
     let adBlock = $state(false);
     let commitHash = $state("");
 
-
-
     onMount(async () => {
-
         commitHash = (await getCommitHash()) || "";
         await initializeTooling();
 
@@ -236,7 +249,10 @@
         if (SessionState.ssr) return;
 
         await detectAdBlockEnabled();
-        console.log("[R][CardGrid][Mount] AdBlock Enabled:", SessionState.adBlockEnabled);
+        console.log(
+            "[R][CardGrid][Mount] AdBlock Enabled:",
+            SessionState.adBlockEnabled,
+        );
         adBlock = SessionState.adBlockEnabled;
         adsEnabled = SessionState.adsEnabled;
         if (adsEnabled) {
@@ -264,7 +280,10 @@
                     script.defer = true;
                     document.head.appendChild(script);
                 } else {
-                    console.log("[R][CardGrid][Mount] No valid AHost for this domain:", host);
+                    console.log(
+                        "[R][CardGrid][Mount] No valid AHost for this domain:",
+                        host,
+                    );
                     adsEnabled = false;
                     SessionState.adsEnabled = false;
                 }
@@ -311,44 +330,47 @@
             bind:this={searchInput}
             bind:value={searchTerm}
         />
-        <ul class="results" bind:this={resultsListElement}>
-            {#if searchResults.length === 0}
-                <li class="search-result-row">No results found</li>
-            {/if}
-            {#each searchResults as result, i (result.game.gameID)}
-                <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-                <li
-                    class="search-result-row"
-                    class:selected={i === selectedIndex}
-                    onclick={() => openGame(result.game)}
-                >
-                    <img
-                        src={`${State.currentServer.protocol}://${State.currentServer.hostname}${State.currentServer.path}${result.game.gameID}${result.game.thumbPath}`}
-                        alt={result.game.fName}
-                    />
-                    <div style="flex: 1;">
-                        <div class="game-name">{result.game.fName}</div>
-                        <div class="game-description">
-                            {result.game.description}
+        <div class="results-inner-container">
+            <ul class="results" bind:this={resultsListElement}>
+                {#if searchResults.length === 0}
+                    <li class="search-result-row">No results found</li>
+                {/if}
+                {#each searchResults as result, i (result.game.gameID)}
+                    <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+                    <li
+                        class="search-result-row"
+                        class:selected={i === selectedIndex}
+                        onclick={() => openGame(result.game)}
+                    >
+                        <img
+                            src={`${State.currentServer.protocol}://${State.currentServer.hostname}${State.currentServer.path}${result.game.gameID}${result.game.thumbPath}`}
+                            alt={result.game.fName}
+                        />
+                        <div style="flex: 1;">
+                            <div class="game-name">{result.game.fName}</div>
+                            <div class="game-description">
+                                {result.game.description}
+                            </div>
+                            <div class="game-plays">
+                                Plays: {result.game.clicks.toLocaleString() ??
+                                    "0"}
+                                {#if result.game.tags && result.game.tags.length}
+                                    &nbsp;|&nbsp;
+                                    <span>
+                                        {#each result.game.tags as tag}
+                                            <span
+                                                style="background: #eee; border-radius: 4px; padding: 2px 6px; margin-right: 4px; font-size: 0.8em;"
+                                                >{tag}</span
+                                            >
+                                        {/each}
+                                    </span>
+                                {/if}
+                            </div>
                         </div>
-                        <div class="game-plays">
-                            Plays: {result.game.clicks.toLocaleString() ?? "0"}
-                            {#if result.game.tags && result.game.tags.length}
-                                &nbsp;|&nbsp;
-                                <span>
-                                    {#each result.game.tags as tag}
-                                        <span
-                                            style="background: #eee; border-radius: 4px; padding: 2px 6px; margin-right: 4px; font-size: 0.8em;"
-                                            >{tag}</span
-                                        >
-                                    {/each}
-                                </span>
-                            {/if}
-                        </div>
-                    </div>
-                </li>
-            {/each}
-        </ul>
+                    </li>
+                {/each}
+            </ul>
+        </div>
     </div>
 </div>
 <div class="main-content-wrapper">
@@ -609,22 +631,44 @@
         gap: 16px;
         scrollbar-width: none;
     }
-    .search ul::-webkit-scrollbar {
-        display: none;
+    .search .results-inner-container::-webkit-scrollbar {
+        display: block;
+        width: 8px;
+        background-color: rgba(255, 255, 255, 0.8);
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+    .search .results-inner-container::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 8px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    }
+    .search .results-inner-container::-webkit-scrollbar-thumb:hover {
+        background: rgba(0, 0, 0, 0.5);
     }
 
-    .search ul {
-        scrollbar-width: none;
-        background-color: rgba(255, 255, 255, 0.8);
-        backdrop-filter: blur(10px) saturate(180%);
+    .results-inner-container {
+        width: 100%;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        overflow-y: scroll;
+        overflow-x: hidden;
+        height: 33vh;
+        padding: 0px;
+        padding-right: 8px;
+        padding-left: 8px;
     }
     .search ul {
-        max-height: 25vh;
-        overflow-y: auto;
-        overflow-x: hidden;
-        border-radius: 20px;
         width: 100%;
-        padding: 4px;
+        padding: 4px 12px 4px 12px;
+        box-sizing: border-box;
+        border-radius: 16px;
+        margin: 0 auto;
+        background-color: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(10px) saturate(180%);
+        border: 1.5px solid #e0e0e0;
     }
     .search ul li.search-result-row {
         display: flex;
