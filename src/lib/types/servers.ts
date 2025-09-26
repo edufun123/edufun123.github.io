@@ -114,9 +114,9 @@ export const findServers = async (): Promise<Server[] | null> => {
         // Fetch both in parallel
         const fetches = [
             fetch(localUrl).catch(() => null),
-            fetch(proxyUrl, {
-                mode: "cors"
-            }).catch(() => null)
+            // fetch(proxyUrl, {
+            //     mode: "cors"
+            // }).catch(() => null)
         ];
 
         const [localRes, proxyRes] = await Promise.all(fetches);
