@@ -1,4 +1,4 @@
-# Ads.txt last updated on: 2025/09/27 23:28:38.549602 by MONUMETRIC/CCPorted
+# Ads.txt last updated on: 2025/09/27 23:48:22.901355 by MONUMETRIC/CCPorted
 OWNERDOMAIN=ccported.github.io
 MANAGERDOMAIN=monumetric.com
 CONTACT=support@monumetric.com
@@ -815,7 +815,9 @@ rubiconproject.com, 26192, RESELLER, 0bfd66d529a55807
 video.unrulymedia.com, 322585001, RESELLER
 adiiix.com, 3de5db9, RESELLER
 fromthetop.io, 65529, RESELLER
-# Applixir.com - last modified: 04/04/24demand.supply, yS5d897HTD6cqviqe, DIRECT
+# Applixir.com - last modified: 04/04/24# Exoclick
+
+demand.supply, yS5d897HTD6cqviqe, DIRECT
 relabe.com, yS5d897HTD6cqviqe, DIRECT
 google.com, pub-3831894559014614, RESELLER, f08c47fec0942fa0
 sulvo.com, yS5d897HTD6cqviqe, DIRECT
@@ -891,3 +893,6 @@ axonix.com, 59089, RESELLER, bc385f2b4a87b721
 improvedigital.com, 2276, RESELLER
 rubiconproject.com, 17608, RESELLER, 0bfd66d529a55807
 lijit.com, 465542, RESELLER, fafdf38b16bf6b2b
+
+# Google Pub
+google.com, pub-6661595569829232, DIRECT, f08c47fec0942fa0
