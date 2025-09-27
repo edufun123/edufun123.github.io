@@ -450,7 +450,7 @@
                 {#if !adBlock && !adsEnabled}
                     {#if (i + 1) % 10 === 0}
                         <div class="inxxx agrid grid">
-                            <!-- <div
+                            <div
                                 style="text-align: center; font-size: 0.9rem; color: #555;width:100%;height:100%;display: flex;flex-direction: column;justify-content: center;align-items: center;"
                             >
                                 <p>
@@ -459,8 +459,8 @@
                                         >ccported@ccported.click</a
                                     > to advertise in this slot
                                 </p>
-                            </div> -->
-                            <script
+                            </div>
+                            <!-- <script
                                 async
                                 type="application/javascript"
                                 src="https://a.magsrv.com/ad-provider.js"
@@ -474,7 +474,7 @@
                                 (AdProvider = window.AdProvider || []).push({
                                     serve: {},
                                 });
-                            </script>
+                            </script> -->
                         </div>
                     {/if}
                 {/if}
