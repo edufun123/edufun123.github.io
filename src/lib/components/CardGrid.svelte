@@ -450,7 +450,7 @@
                 {#if !adBlock && !adsEnabled}
                     {#if (i + 1) % 10 === 0}
                         <div class="inxxx agrid grid">
-                            <div
+                            <!-- <div
                                 style="text-align: center; font-size: 0.9rem; color: #555;width:100%;height:100%;display: flex;flex-direction: column;justify-content: center;align-items: center;"
                             >
                                 <p>
@@ -459,7 +459,22 @@
                                         >ccported@ccported.click</a
                                     > to advertise in this slot
                                 </p>
-                            </div>
+                            </div> -->
+                            <script
+                                async
+                                type="application/javascript"
+                                src="https://a.magsrv.com/ad-provider.js"
+                            ></script>
+                            <ins
+                                class="eas6a97888e2"
+                                data-zoneid="5721174"
+                                data-keywords="gaming,games,flash,retro,arcade,html,unblocked,video,fun,entertainment"
+                            ></ins>
+                            <script>
+                                (AdProvider = window.AdProvider || []).push({
+                                    serve: {},
+                                });
+                            </script>
                         </div>
                     {/if}
                 {/if}

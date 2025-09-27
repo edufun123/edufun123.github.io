@@ -33,6 +33,11 @@ jobs:
           # Fetch Applixir ads.txt and append below Monumetric lines
           curl -sS "https://cdn.applixir.com/ads.txt" >> /tmp/final_ads.txt
 
+            # Append additional lines from additional_lines.txt if it exists
+            if [ -f additional_lines.txt ]; then
+              cat additional_lines.txt >> /tmp/final_ads.txt
+            fi
+
           # Compare the file (excluding the timestamp line) with existing ads.txt
           if [ -f static/ads.txt ]; then
             tail -n +2 /tmp/final_ads.txt > /tmp/new_body.txt
