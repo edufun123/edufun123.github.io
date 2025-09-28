@@ -343,7 +343,7 @@
                         onclick={() => openGame(result.game)}
                     >
                         <img
-                            src={`${State.currentServer.protocol}://${State.currentServer.hostname}${State.currentServer.path}${result.game.gameID}${result.game.thumbPath}`}
+                            src={`https://cdn.jsdelivr.net/gh/ccported/games@${commitHash}/${result.game.gameID}${result.game.thumbPath}`}
                             alt={result.game.fName}
                         />
                         <div style="flex: 1;">
