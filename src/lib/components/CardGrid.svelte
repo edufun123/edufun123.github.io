@@ -888,6 +888,7 @@
     .inxxx.agrid.grid {
         padding: 20px;
         box-sizing: border-box;
+        max-height: 300px;
     }
     .inxx.agrid.grid::before {
         content: "Ad Loading";
